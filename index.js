@@ -121,11 +121,10 @@ client.connect((err) => {
    //FindSingleProduct
     app.get("/singleProductById/:id", (req, res) => {
   
-      ordersCollection.find({ _id: ObjectId(req.params.id) })
+      productsCollection.find({ _id: ObjectId(req.params.id) })
       .toArray((error, documents) => {
         
-        console.log(documents);
-        // res.send(documents);
+        res.send(documents[0]);
       });
   
     });
