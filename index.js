@@ -97,7 +97,6 @@ client.connect((err) => {
       )
       .then(result => {
 
-          console.log(result);
           res.send(result.modifiedCount > 0);
       });
   
@@ -107,7 +106,7 @@ client.connect((err) => {
 
 
     //Delete Product
-    app.delete("/deleteProductById", (req, res) => {
+    app.delete("/deleteProductById/:id", (req, res) => {
       productsCollection.deleteOne({_id: ObjectId(req.params.id)})
       .then(result => {
 
