@@ -37,7 +37,7 @@ client.connect((err) => {
   
   
   
-    // Add product Api
+    // Add product 
     app.post("/addProduct", (req, res) => {
   
       const file = req.files.image;
@@ -61,7 +61,7 @@ client.connect((err) => {
     });
   
   
-    //Get All Products Api
+    //Get All Products
     app.get("/products", (req, res) => {
   
         productsCollection.find({})
@@ -74,174 +74,62 @@ client.connect((err) => {
 
 
 
+    //Update product
+    app.patch("/updateProductById/:id", (req, res) => {
+      
+      const file = req.files.image;
+      const allData = JSON.parse(req.body.data);
+      const newImg = file.data;
+      const encodedImg = newImg.toString("base64");
+  
+      const image = {
+        contentType: file.mimetype,
+        size: file.size,
+        img: Buffer.from(encodedImg, "base64"),
+      };
+      allData.image = image;
+      
+      
+      productsCollection.updateOne({ _id: ObjectId(req.params.id) },
+        {
+            $set: { name: allData.name, description: allData.description, image: allData.image }
+        }
+      )
+      .then(result => {
+
+          console.log(result);
+          res.send(result.modifiedCount > 0);
+      });
+  
+    });
 
 
 
 
+    //Delete Product
+    app.delete("/deleteProductById", (req, res) => {
+      productsCollection.deleteOne({_id: ObjectId(req.params.id)})
+      .then(result => {
+
+        console.log(result);
+        // res.send(result)
+      })
+    })
 
 
 
-  
-  
-    // After Submit order User can see her order
-    // app.get("/orderByUser/:email", (req, res) => {
-  
-    //   ordersCollection.find({ email: req.params.email })
-    //   .toArray((error, documents) => {
-  
-    //     res.send(documents);
-    //   });
-  
-    // });
-  
-  
-  
-    //update Order Status by specific order
-    // app.patch("/updateSurviceById/:id", (req, res) => {
-  
-    //   ordersCollection.updateOne({ _id: ObjectId(req.params.id) },
-    //     {
-    //         $set: { status: req.body.status }
-    //     }
-    //   )
-    //   .then(result => {
-  
-    //       res.send(result.modifiedCount > 0);
-    //   });
-  
-    // });
-  
-  
-  
-    // After click service on homepage then get service name in Order form Api
-    // app.get("/serviceById/:id", (req, res) => {
-  
-    //   servicesCollection.find({ _id: ObjectId(req.params.id) })
-    //   .toArray((error, documents) => {
-  
-    //       res.send(documents[0]);
-    //   });
-  
-    // });
-  
-  
-  
-    // Home page Show alll Service
-    // app.get("/services", (req, res) => {
-  
-    //   servicesCollection.find({}).toArray((error, documents) => {
-  
-    //     res.send(documents);
-    //   });
-  
-    // });
-  
-  
-  
-  
-  
-    //
-    // app.get("/reviews", (req, res) => {
-  
-    //   reviewCollection.find({}).toArray((error, documents) => {
-  
-    //     res.send(documents);
-    //   });
-  
-    // });
-  
-  
-  
-    /**********************************************************************************************************                                            Admin Section Used Api
-    ***********************************************************************************************************/
-    
-  
-  
-    // add service for an admin
-    // app.post("/addService", (req, res) => {
-  
-    //   const file = req.files.image;
-    //   const title = req.body.title;
-    //   const description = req.body.description;
-  
-    //   const newImg = file.data;
-    //   const encodedImg = newImg.toString("base64");
-  
-    //   const image = {
-  
-    //     contentType: file.mimetype,
-    //     size: file.size,
-    //     img: Buffer.from(encodedImg, "base64")
-  
-    //   };
-  
-    //   servicesCollection.insertOne({ title, description, image })
-    //   .then((result) => {
-  
-    //       res.send(result.insertedCount > 0);
-    //   });
-  
-    // });
-  
-  
-  
-    // Orders list Show in Admin all Orders List
-    // app.get("/allOrders", (req, res) => {
-  
-    //   ordersCollection.find({})
-    //   .toArray((error, documents) => {
-  
-    //     res.send(documents);
-    //   });
-  
-    // });
-  
-  
-  
-    //Make an Admin Api
-    // app.post("/makeAdmin", (req, res) => {
-  
-    //   adminCollection.insertOne(req.body).then((result) => {
-  
-    //     res.send(result.insertedCount > 0);
-    //   });
-  
-    // });
-  
-  
-  
-  
-  
-  
-  
-  
-  
-    // app.patch("/updateSurviceById/:id", (req, res) => {
-  
-    //   appointmentsCollection.updateOne({_id: ObjectId(req.params.id)}, {
-    //     $set: {type: req.body.type}
-    //   })
-    //   .then(result => {
-    //     res.send(result.modifiedCount > 0)
-    //   })
-  
-    // })
-  
-  
-  
-  
-  
-    // app.get("/admin/:email", (req, res) => {
-  
-    //   adminCollection.find({ email: req.params.email })
-    //   .toArray((error, documents) => {
-  
-    //       res.send(documents.length > 0);
-    //     });
-  
-    // });
-  
-    
+   //FindSingleProduct
+    app.get("/singleProductById/:id", (req, res) => {
+  
+      ordersCollection.find({ _id: ObjectId(req.params.id) })
+      .toArray((error, documents) => {
+        
+        console.log(documents);
+        // res.send(documents);
+      });
+  
+    });
+
   
     console.log("Database Connected");
   });
